@@ -1,0 +1,290 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  CUSTOMER
+  WORKER
+  ADMIN
+}
+
+enum JobStatus {
+  PENDING
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  UPI
+  WALLET
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED
+  CLOSED
+}
+
+enum BookingType {
+  INSTANT
+  SCHEDULED
+}
+
+enum Urgency {
+  LOW
+  NORMAL
+  URGENT
+}
+
+// ─── User ───────────────────────────────────────────────────────────────────
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  phone         String?   @unique
+  passwordHash  String?
+  role          UserRole  @default(CUSTOMER)
+  avatar        String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  worker    Worker?
+  customer  Customer?
+  accounts  Account[]
+  sessions  Session[]
+  locations RealTimeLocation[]
+  reviewsGiven    Review[] @relation("ReviewFrom")
+  reviewsReceived Review[] @relation("ReviewTo")
+  disputes  Dispute[]
+
+  @@map("users")
+}
+
+// ─── NextAuth Models ────────────────────────────────────────────────────────
+model Account {
+  id                String @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// ─── Worker ─────────────────────────────────────────────────────────────────
+model Worker {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  aadhaarNumber  String?
+  skills         String[]
+  bio            String?
+  hourlyRate     Float    @default(400)
+  isVerified     Boolean  @default(false)
+  isOnline       Boolean  @default(false)
+  rating         Float    @default(0)
+  totalJobs      Int      @default(0)
+  latitude       Float?
+  longitude      Float?
+  categoryId     String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category JobCategory @relation(fields: [categoryId], references: [id])
+  bookings Booking[]
+  earnings Earning[]
+
+  @@map("workers")
+}
+
+// ─── Customer ───────────────────────────────────────────────────────────────
+model Customer {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  address   String?
+  latitude  Float?
+  longitude Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobRequests JobRequest[]
+
+  @@map("customers")
+}
+
+// ─── Job Category ───────────────────────────────────────────────────────────
+model JobCategory {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  nameHi      String?
+  icon        String?
+  description String?
+  basePrice   Float   @default(0)
+  image       String?
+
+  workers     Worker[]
+  jobRequests JobRequest[]
+
+  @@map("job_categories")
+}
+
+// ─── Job Request ────────────────────────────────────────────────────────────
+model JobRequest {
+  id           String      @id @default(cuid())
+  customerId   String
+  categoryId   String
+  description  String
+  address      String
+  latitude     Float
+  longitude    Float
+  scheduledAt  DateTime?
+  bookingType  BookingType @default(INSTANT)
+  status       JobStatus   @default(PENDING)
+  urgency      Urgency     @default(NORMAL)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  customer Customer    @relation(fields: [customerId], references: [id])
+  category JobCategory @relation(fields: [categoryId], references: [id])
+  bookings Booking[]
+
+  @@map("job_requests")
+}
+
+// ─── Booking ────────────────────────────────────────────────────────────────
+model Booking {
+  id            String        @id @default(cuid())
+  jobRequestId  String
+  workerId      String
+  status        JobStatus     @default(ACCEPTED)
+  startedAt     DateTime?
+  completedAt   DateTime?
+  totalAmount   Float
+  paymentMethod PaymentMethod @default(UPI)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  jobRequest JobRequest @relation(fields: [jobRequestId], references: [id])
+  worker     Worker     @relation(fields: [workerId], references: [id])
+  reviews    Review[]
+  payments   Payment[]
+  disputes   Dispute[]
+
+  @@map("bookings")
+}
+
+// ─── Real Time Location ─────────────────────────────────────────────────────
+model RealTimeLocation {
+  id        String   @id @default(cuid())
+  userId    String
+  latitude  Float
+  longitude Float
+  updatedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("real_time_locations")
+}
+
+// ─── Review ─────────────────────────────────────────────────────────────────
+model Review {
+  id        String   @id @default(cuid())
+  bookingId String
+  rating    Int
+  comment   String?
+  fromUserId String
+  toUserId   String
+  createdAt DateTime @default(now())
+
+  booking  Booking @relation(fields: [bookingId], references: [id])
+  fromUser User    @relation("ReviewFrom", fields: [fromUserId], references: [id])
+  toUser   User    @relation("ReviewTo", fields: [toUserId], references: [id])
+
+  @@map("reviews")
+}
+
+// ─── Payment ────────────────────────────────────────────────────────────────
+model Payment {
+  id            String        @id @default(cuid())
+  bookingId     String
+  amount        Float
+  method        PaymentMethod
+  status        PaymentStatus @default(PENDING)
+  transactionId String?
+  createdAt     DateTime      @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@map("payments")
+}
+
+// ─── Earning ────────────────────────────────────────────────────────────────
+model Earning {
+  id         String    @id @default(cuid())
+  workerId   String
+  amount     Float
+  commission Float
+  netAmount  Float
+  paidAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  worker Worker @relation(fields: [workerId], references: [id])
+
+  @@map("earnings")
+}
+
+// ─── Dispute ────────────────────────────────────────────────────────────────
+model Dispute {
+  id          String        @id @default(cuid())
+  bookingId   String
+  raisedById  String
+  reason      String
+  status      DisputeStatus @default(OPEN)
+  resolution  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  booking  Booking @relation(fields: [bookingId], references: [id])
+  raisedBy User    @relation(fields: [raisedById], references: [id])
+
+  @@map("disputes")
+}
