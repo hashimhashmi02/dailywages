@@ -10,12 +10,12 @@ import {
   Truck,
   Snowflake,
   BrickWall,
-  ArrowLeft,
   Star,
-  MapPin,
   ChevronRight,
 } from "lucide-react";
 import { JOB_CATEGORIES, MOCK_WORKERS } from "@/lib/constants";
+import PageHeader from "@/components/PageHeader";
+import UserAvatar from "@/components/UserAvatar";
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
   Plumber: Wrench,
@@ -41,18 +41,8 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function CategoriesPage() {
   return (
-    <div className="min-h-screen bg-muted">
-      {/* ─── Header ──────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-border sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center gap-3">
-            <Link href="/customer/dashboard" className="p-2 rounded-xl hover:bg-muted transition-colors">
-              <ArrowLeft className="w-5 h-5 text-foreground" />
-            </Link>
-            <h1 className="text-xl font-bold text-foreground">All Services</h1>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-muted page-transition">
+      <PageHeader title="All Services" backHref="/customer/dashboard" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* ─── Category Cards ────────────────────────────────────────────── */}
@@ -67,7 +57,7 @@ export default function CategoriesPage() {
               <Link
                 key={cat.id}
                 href={`/customer/workers?category=${cat.id}`}
-                className="bg-white rounded-2xl p-5 border border-border hover:shadow-lg hover:border-primary/20 transition-all hover-lift flex items-center gap-5"
+                className="bg-card rounded-2xl p-5 border border-border hover:shadow-lg hover:border-primary/20 transition-all hover-lift flex items-center gap-5"
               >
                 <div
                   className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0"
@@ -104,17 +94,10 @@ export default function CategoriesPage() {
             {MOCK_WORKERS.filter((w) => w.isVerified).slice(0, 3).map((worker) => (
               <div
                 key={worker.id}
-                className="bg-white rounded-2xl p-5 border border-border hover-lift"
+                className="bg-card rounded-2xl p-5 border border-border hover-lift"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="relative">
-                    <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center text-white font-bold">
-                      {worker.user.name.split(" ").map(n => n[0]).join("")}
-                    </div>
-                    {worker.isOnline && (
-                      <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />
-                    )}
-                  </div>
+                  <UserAvatar name={worker.user.name} size="md" isOnline={worker.isOnline} />
                   <div>
                     <h3 className="font-semibold text-foreground text-sm">{worker.user.name}</h3>
                     <p className="text-xs text-primary">{worker.category.name}</p>
