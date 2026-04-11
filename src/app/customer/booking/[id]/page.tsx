@@ -16,6 +16,8 @@ import {
   Check,
 } from "lucide-react";
 import { MOCK_WORKERS, JOB_CATEGORIES, APP_CONFIG } from "@/lib/constants";
+import UserAvatar from "@/components/UserAvatar";
+import { showToast } from "@/components/Toast";
 
 export default function BookingPage() {
   const [step, setStep] = useState(1);
@@ -31,9 +33,8 @@ export default function BookingPage() {
   const total = estimatedCost + platformFee;
 
   return (
-    <div className="min-h-screen bg-muted">
-      {/* ─── Header ──────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-border sticky top-0 z-40">
+    <div className="min-h-screen bg-background page-transition">
+      <header className="header-blur sticky top-0 z-40">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center gap-3 mb-4">
             <Link href="/customer/workers" className="p-2 rounded-xl hover:bg-muted transition-colors">
@@ -71,14 +72,9 @@ export default function BookingPage() {
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
         {/* ─── Worker Info Card ──────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl p-5 border border-border mb-6">
+        <div className="bg-card rounded-2xl p-5 border border-border mb-6 shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center text-white font-bold text-lg">
-                {worker.user.name.split(" ").map(n => n[0]).join("")}
-              </div>
-              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
-            </div>
+              <UserAvatar name={worker.user.name} size="lg" isOnline={true} />
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-foreground">{worker.user.name}</h3>
@@ -107,7 +103,7 @@ export default function BookingPage() {
                 <button
                   onClick={() => setBookingType("instant")}
                   className={`p-4 rounded-2xl border-2 text-left transition-all ${
-                    bookingType === "instant" ? "border-primary bg-primary-light" : "border-border bg-white hover:border-primary/30"
+                    bookingType === "instant" ? "border-primary bg-primary-light" : "border-border bg-card hover:border-primary/30"
                   }`}
                 >
                   <Clock className={`w-6 h-6 mb-2 ${bookingType === "instant" ? "text-primary" : "text-muted-foreground"}`} />
@@ -117,7 +113,7 @@ export default function BookingPage() {
                 <button
                   onClick={() => setBookingType("scheduled")}
                   className={`p-4 rounded-2xl border-2 text-left transition-all ${
-                    bookingType === "scheduled" ? "border-primary bg-primary-light" : "border-border bg-white hover:border-primary/30"
+                    bookingType === "scheduled" ? "border-primary bg-primary-light" : "border-border bg-card hover:border-primary/30"
                   }`}
                 >
                   <Calendar className={`w-6 h-6 mb-2 ${bookingType === "scheduled" ? "text-primary" : "text-muted-foreground"}`} />
@@ -154,7 +150,7 @@ export default function BookingPage() {
             {/* Location */}
             <div>
               <label className="text-sm font-semibold text-foreground mb-3 block">Service Location</label>
-              <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-border cursor-pointer hover:border-primary/30 transition-colors">
+              <div className="flex items-center gap-3 p-4 bg-card rounded-2xl border border-border cursor-pointer hover:border-primary/30 transition-colors shadow-sm">
                 <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center">
                   <MapPin className="w-5 h-5 text-primary" />
                 </div>
@@ -202,7 +198,7 @@ export default function BookingPage() {
                     key={method.id}
                     onClick={() => setPaymentMethod(method.id)}
                     className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all ${
-                      paymentMethod === method.id ? "border-primary bg-primary-light" : "border-border bg-white hover:border-primary/30"
+                      paymentMethod === method.id ? "border-primary bg-primary-light" : "border-border bg-card hover:border-primary/30"
                     }`}
                   >
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${paymentMethod === method.id ? "bg-primary/10" : "bg-muted"}`}>
@@ -223,7 +219,7 @@ export default function BookingPage() {
             </div>
 
             {/* Price Breakdown */}
-            <div className="bg-white rounded-2xl p-5 border border-border">
+            <div className="bg-card rounded-2xl p-5 border border-border shadow-sm">
               <h3 className="font-semibold text-foreground mb-4">Price Estimate</h3>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
@@ -262,13 +258,11 @@ export default function BookingPage() {
         {/* ─── Step 3: Confirm ───────────────────────────────────────────── */}
         {step === 3 && (
           <div className="space-y-6 animate-fade-in">
-            <div className="bg-white rounded-2xl p-5 border border-border space-y-4">
+            <div className="bg-card rounded-2xl p-5 border border-border space-y-4 shadow-sm">
               <h3 className="font-semibold text-foreground">Booking Summary</h3>
 
               <div className="flex items-center gap-3 pb-4 border-b border-border">
-                <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white font-bold text-sm">
-                  {worker.user.name.split(" ").map(n => n[0]).join("")}
-                </div>
+                <UserAvatar name={worker.user.name} size="sm" />
                 <div>
                   <p className="font-medium text-foreground text-sm">{worker.user.name}</p>
                   <p className="text-xs text-primary">{worker.category.name}</p>

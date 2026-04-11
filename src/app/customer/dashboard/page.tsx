@@ -40,9 +40,9 @@ const NEARBY_WORKERS = MOCK_WORKERS.filter((w) => w.isOnline).slice(0, 3);
 
 export default function CustomerDashboard() {
   return (
-    <div className="flex flex-col min-h-screen bg-muted page-transition">
+    <div className="flex flex-col min-h-screen bg-background page-transition">
       {/* ─── Header ──────────────────────────────────────────────────────── */}
-      <header className="bg-card border-b border-border sticky top-0 z-40">
+      <header className="header-blur sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -122,7 +122,7 @@ export default function CustomerDashboard() {
               <Link
                 key={cat.name}
                 href="/customer/categories"
-                className="flex flex-col items-center gap-2 p-3 bg-white rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all group"
+                className="flex flex-col items-center gap-2 p-3 bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all group"
               >
                 <div
                   className="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110"
@@ -177,7 +177,7 @@ export default function CustomerDashboard() {
         <div>
           <h2 className="text-lg font-bold text-foreground mb-4">Recent Activity</h2>
           <div className="space-y-3">
-            <div className="bg-white rounded-2xl p-4 border border-border flex items-center gap-4">
+            <div className="bg-card rounded-2xl p-4 border border-border flex items-center gap-4 shadow-sm hover-lift">
               <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
                 <Wrench className="w-6 h-6 text-green-600" />
               </div>
@@ -190,7 +190,7 @@ export default function CustomerDashboard() {
                 <span className="text-sm font-medium">5.0</span>
               </div>
             </div>
-            <div className="bg-white rounded-2xl p-4 border border-border flex items-center gap-4">
+            <div className="bg-card rounded-2xl p-4 border border-border flex items-center gap-4 shadow-sm hover-lift">
               <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center">
                 <Zap className="w-6 h-6 text-yellow-600" />
               </div>
@@ -208,7 +208,7 @@ export default function CustomerDashboard() {
       </main>
 
       {/* ─── Bottom Nav (Mobile) ─────────────────────────────────────────── */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50" aria-label="Customer navigation">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bottom-nav z-50" aria-label="Customer navigation">
         <div className="flex items-center justify-around py-2">
           <Link href="/customer/dashboard" className="flex flex-col items-center gap-0.5 py-1 text-primary" aria-current="page">
             <Home className="w-5 h-5" />

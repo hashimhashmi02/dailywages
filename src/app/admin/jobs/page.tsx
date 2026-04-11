@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { useState } from "react";
+import PageHeader from "@/components/PageHeader";
+import EmptyState from "@/components/EmptyState";
 
 const ALL_JOBS = [
   { id: "#DW-2045", customer: "Rahul Sharma", worker: "Suresh Kumar", category: "Plumbing", status: "IN_PROGRESS", amount: 750, time: "10 min ago" },
@@ -26,66 +27,70 @@ export default function AdminJobsPage() {
   const filtered = ALL_JOBS.filter(j => filter === "all" || j.status === filter);
 
   return (
-    <div className="min-h-screen bg-muted">
-      <header className="bg-white border-b border-border sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center gap-3 mb-4">
-            <Link href="/admin/dashboard" className="p-2 rounded-xl hover:bg-muted transition-colors">
-              <ArrowLeft className="w-5 h-5 text-foreground" />
-            </Link>
-            <h1 className="text-xl font-bold text-foreground">Jobs Overview</h1>
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            {["all", "PENDING", "IN_PROGRESS", "COMPLETED", "CANCELLED"].map((f) => (
-              <button key={f} onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-full text-xs font-medium transition-all ${filter === f ? "gradient-primary text-white" : "bg-muted text-foreground hover:bg-slate-200"}`}>
-                {f === "all" ? "All" : STATUS_MAP[f]?.label || f}
-              </button>
-            ))}
-          </div>
+    <div className="min-h-screen bg-background page-transition">
+      <PageHeader title="Jobs Overview" backHref="/admin/dashboard">
+        <div className="flex gap-2 flex-wrap">
+          {["all", "PENDING", "IN_PROGRESS", "COMPLETED", "CANCELLED"].map((f) => (
+            <button key={f} onClick={() => setFilter(f)}
+              className={`px-4 py-2 rounded-full text-xs font-medium transition-all ${filter === f ? "btn-primary" : "bg-muted text-foreground hover:bg-border"}`}>
+              {f === "all" ? "All" : STATUS_MAP[f]?.label || f}
+            </button>
+          ))}
         </div>
-      </header>
+      </PageHeader>
+
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-        <div className="bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl h-48 mb-6 flex items-center justify-center border border-border">
-          <div className="text-center">
+        {/* Map placeholder */}
+        <div className="bg-gradient-to-br from-muted to-border rounded-2xl h-48 mb-6 flex items-center justify-center relative overflow-hidden">
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-1/4 left-1/3 w-3 h-3 bg-primary rounded-full animate-pulse-dot" />
+            <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-primary rounded-full animate-pulse-dot" style={{ animationDelay: '0.5s' }} />
+            <div className="absolute top-1/3 left-2/3 w-3 h-3 bg-primary rounded-full animate-pulse-dot" style={{ animationDelay: '1s' }} />
+          </div>
+          <div className="text-center z-10">
             <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
             <p className="text-sm text-muted-foreground font-medium">Live Jobs Map</p>
           </div>
         </div>
-        <div className="bg-white rounded-2xl border border-border overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left px-5 py-3 text-muted-foreground font-medium">Job ID</th>
-                  <th className="text-left px-5 py-3 text-muted-foreground font-medium">Customer</th>
-                  <th className="text-left px-5 py-3 text-muted-foreground font-medium">Worker</th>
-                  <th className="text-left px-5 py-3 text-muted-foreground font-medium">Category</th>
-                  <th className="text-left px-5 py-3 text-muted-foreground font-medium">Status</th>
-                  <th className="text-right px-5 py-3 text-muted-foreground font-medium">Amount</th>
-                  <th className="text-right px-5 py-3 text-muted-foreground font-medium">Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((job) => (
-                  <tr key={job.id} className="border-b border-border last:border-0 hover:bg-muted/30">
-                    <td className="px-5 py-4 font-medium text-primary">{job.id}</td>
-                    <td className="px-5 py-4">{job.customer}</td>
-                    <td className="px-5 py-4">{job.worker}</td>
-                    <td className="px-5 py-4 text-muted-foreground">{job.category}</td>
-                    <td className="px-5 py-4">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_MAP[job.status]?.cls}`}>
-                        {STATUS_MAP[job.status]?.label}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 text-right font-medium">₹{job.amount}</td>
-                    <td className="px-5 py-4 text-right text-muted-foreground text-xs">{job.time}</td>
+
+        {filtered.length === 0 ? (
+          <EmptyState title="No jobs found" description="Try selecting a different filter." />
+        ) : (
+          <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="text-left px-5 py-3.5 text-muted-foreground font-medium text-xs uppercase tracking-wider">Job ID</th>
+                    <th className="text-left px-5 py-3.5 text-muted-foreground font-medium text-xs uppercase tracking-wider">Customer</th>
+                    <th className="text-left px-5 py-3.5 text-muted-foreground font-medium text-xs uppercase tracking-wider">Worker</th>
+                    <th className="text-left px-5 py-3.5 text-muted-foreground font-medium text-xs uppercase tracking-wider">Category</th>
+                    <th className="text-left px-5 py-3.5 text-muted-foreground font-medium text-xs uppercase tracking-wider">Status</th>
+                    <th className="text-right px-5 py-3.5 text-muted-foreground font-medium text-xs uppercase tracking-wider">Amount</th>
+                    <th className="text-right px-5 py-3.5 text-muted-foreground font-medium text-xs uppercase tracking-wider">Time</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filtered.map((job) => (
+                    <tr key={job.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                      <td className="px-5 py-4 font-semibold text-primary">{job.id}</td>
+                      <td className="px-5 py-4 text-foreground">{job.customer}</td>
+                      <td className="px-5 py-4 text-foreground">{job.worker}</td>
+                      <td className="px-5 py-4 text-muted-foreground">{job.category}</td>
+                      <td className="px-5 py-4">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_MAP[job.status]?.cls}`}>
+                          {STATUS_MAP[job.status]?.label}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-right font-semibold text-foreground">₹{job.amount}</td>
+                      <td className="px-5 py-4 text-right text-muted-foreground text-xs">{job.time}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );
