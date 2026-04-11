@@ -19,8 +19,11 @@ import {
   ArrowRight,
   ChevronRight,
   Plus,
+  Home,
 } from "lucide-react";
 import { MOCK_BOOKINGS, MOCK_WORKERS, JOB_CATEGORIES } from "@/lib/constants";
+import UserAvatar from "@/components/UserAvatar";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const QUICK_CATEGORIES = [
   { name: "Plumber", icon: Wrench, color: "#3b82f6" },
@@ -37,23 +40,22 @@ const NEARBY_WORKERS = MOCK_WORKERS.filter((w) => w.isOnline).slice(0, 3);
 
 export default function CustomerDashboard() {
   return (
-    <div className="flex flex-col min-h-screen bg-muted">
+    <div className="flex flex-col min-h-screen bg-muted page-transition">
       {/* ─── Header ──────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-border sticky top-0 z-40">
+      <header className="bg-card border-b border-border sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-muted-foreground text-sm">Good evening 👋</p>
               <h1 className="text-xl font-bold text-foreground">Rahul Sharma</h1>
             </div>
-            <div className="flex items-center gap-3">
-              <button className="relative p-2.5 rounded-xl bg-muted hover:bg-slate-200 transition-colors">
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <button className="relative p-2.5 rounded-xl bg-muted hover:bg-slate-200 transition-colors" aria-label="Notifications">
                 <Bell className="w-5 h-5 text-muted-foreground" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
               </button>
-              <div className="w-10 h-10 gradient-primary rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                RS
-              </div>
+              <UserAvatar name="Rahul Sharma" size="sm" />
             </div>
           </div>
 
@@ -71,7 +73,7 @@ export default function CustomerDashboard() {
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full">
         {/* ─── Location Bar ──────────────────────────────────────────────── */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-2xl border border-border mb-6 hover-lift cursor-pointer">
+        <div className="flex items-center gap-3 px-4 py-3 bg-card rounded-2xl border border-border mb-6 hover-lift cursor-pointer">
           <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center">
             <MapPin className="w-5 h-5 text-primary" />
           </div>
@@ -147,15 +149,10 @@ export default function CustomerDashboard() {
               <Link
                 key={worker.id}
                 href={`/customer/workers`}
-                className="bg-white rounded-2xl p-5 border border-border hover:shadow-lg hover:border-primary/20 transition-all hover-lift"
+                className="bg-card rounded-2xl p-5 border border-border hover:shadow-lg hover:border-primary/20 transition-all hover-lift"
               >
                 <div className="flex items-start gap-4">
-                  <div className="relative">
-                    <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center text-white font-bold text-lg">
-                      {worker.user.name.split(" ").map(n => n[0]).join("")}
-                    </div>
-                    <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
-                  </div>
+                  <UserAvatar name={worker.user.name} size="lg" isOnline={true} />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-foreground">{worker.user.name}</h3>
                     <p className="text-sm text-primary font-medium">{worker.category.name}</p>
@@ -211,17 +208,17 @@ export default function CustomerDashboard() {
       </main>
 
       {/* ─── Bottom Nav (Mobile) ─────────────────────────────────────────── */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border z-50">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50" aria-label="Customer navigation">
         <div className="flex items-center justify-around py-2">
-          <Link href="/customer/dashboard" className="flex flex-col items-center gap-0.5 py-1 text-primary">
-            <MapPin className="w-5 h-5" />
+          <Link href="/customer/dashboard" className="flex flex-col items-center gap-0.5 py-1 text-primary" aria-current="page">
+            <Home className="w-5 h-5" />
             <span className="text-[10px] font-medium">Home</span>
           </Link>
           <Link href="/customer/categories" className="flex flex-col items-center gap-0.5 py-1 text-muted-foreground">
             <Search className="w-5 h-5" />
             <span className="text-[10px] font-medium">Search</span>
           </Link>
-          <Link href="/customer/dashboard" className="flex flex-col items-center gap-0.5 py-1 relative -top-4">
+          <Link href="/customer/categories" className="flex flex-col items-center gap-0.5 py-1 relative -top-4" aria-label="Book a new service">
             <div className="w-14 h-14 gradient-primary rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
               <Plus className="w-7 h-7 text-white" />
             </div>
@@ -230,8 +227,8 @@ export default function CustomerDashboard() {
             <Clock className="w-5 h-5" />
             <span className="text-[10px] font-medium">History</span>
           </Link>
-          <Link href="/customer/dashboard" className="flex flex-col items-center gap-0.5 py-1 text-muted-foreground">
-            <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold">RS</div>
+          <Link href="/customer/dashboard" className="flex flex-col items-center gap-0.5 py-1 text-muted-foreground" aria-label="Profile">
+            <UserAvatar name="Rahul Sharma" size="sm" className="!w-7 !h-7 !text-[10px] !rounded-full" />
             <span className="text-[10px] font-medium">Profile</span>
           </Link>
         </div>

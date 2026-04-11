@@ -3,25 +3,48 @@
 import Link from "next/link";
 import { useState } from "react";
 import {
-  ArrowLeft,
   Upload,
   Camera,
   User,
   Phone,
   Mail,
   CreditCard,
-  FileText,
   Check,
   ChevronRight,
   Shield,
 } from "lucide-react";
 import { JOB_CATEGORIES } from "@/lib/constants";
+import PageHeader from "@/components/PageHeader";
+import { showToast } from "@/components/Toast";
 
 const STEPS = ["Personal Info", "ID Verification", "Skills & Rates", "Review"];
+
+interface FormData {
+  fullName: string;
+  phone: string;
+  email: string;
+  address: string;
+  aadhaar: string;
+  hourlyRate: string;
+  bio: string;
+}
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [form, setForm] = useState<FormData>({
+    fullName: "",
+    phone: "",
+    email: "",
+    address: "",
+    aadhaar: "",
+    hourlyRate: "",
+    bio: "",
+  });
+
+  const updateField = (field: keyof FormData, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
 
   const toggleSkill = (catId: string) => {
     setSelectedSkills((prev) =>
@@ -29,27 +52,35 @@ export default function OnboardingPage() {
     );
   };
 
+  const handleNext = () => {
+    if (step === 0 && !form.fullName.trim()) {
+      showToast("Please enter your full name", "warning");
+      return;
+    }
+    if (step === 0 && !form.phone.trim()) {
+      showToast("Please enter your phone number", "warning");
+      return;
+    }
+    if (step === 2 && selectedSkills.length === 0) {
+      showToast("Please select at least one skill", "warning");
+      return;
+    }
+    setStep((s) => s + 1);
+  };
+
   return (
-    <div className="min-h-screen bg-muted">
-      <header className="bg-white border-b border-border sticky top-0 z-40">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center gap-3 mb-4">
-            <Link href="/" className="p-2 rounded-xl hover:bg-muted transition-colors">
-              <ArrowLeft className="w-5 h-5 text-foreground" />
-            </Link>
-            <h1 className="text-xl font-bold text-foreground">Worker Registration</h1>
-          </div>
-          {/* Step indicator */}
-          <div className="flex gap-2">
-            {STEPS.map((s, i) => (
-              <div key={s} className="flex-1">
-                <div className={`h-1.5 rounded-full transition-colors ${i <= step ? "gradient-primary" : "bg-border"}`} />
-                <p className={`text-[10px] mt-1 ${i <= step ? "text-primary font-medium" : "text-muted-foreground"}`}>{s}</p>
-              </div>
-            ))}
-          </div>
+    <div className="min-h-screen bg-muted page-transition">
+      <PageHeader title="Worker Registration" backHref="/">
+        {/* Step indicator */}
+        <div className="flex gap-2">
+          {STEPS.map((s, i) => (
+            <div key={s} className="flex-1">
+              <div className={`h-1.5 rounded-full transition-colors ${i <= step ? "gradient-primary" : "bg-border"}`} />
+              <p className={`text-[10px] mt-1 ${i <= step ? "text-primary font-medium" : "text-muted-foreground"}`}>{s}</p>
+            </div>
+          ))}
         </div>
-      </header>
+      </PageHeader>
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
         {/* Step 0: Personal Info */}
@@ -65,32 +96,56 @@ export default function OnboardingPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-foreground mb-1.5 block">Full Name</label>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Full Name *</label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input type="text" placeholder="Enter your full name" className="w-full pl-11 pr-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                  <input
+                    type="text"
+                    value={form.fullName}
+                    onChange={(e) => updateField("fullName", e.target.value)}
+                    placeholder="Enter your full name"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-card text-foreground"
+                  />
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground mb-1.5 block">Phone Number</label>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Phone Number *</label>
                 <div className="relative">
                   <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input type="tel" placeholder="+91 98765 43210" className="w-full pl-11 pr-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                  <input
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) => updateField("phone", e.target.value)}
+                    placeholder="+91 98765 43210"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-card text-foreground"
+                  />
                 </div>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-1.5 block">Email (Optional)</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input type="email" placeholder="your@email.com" className="w-full pl-11 pr-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                  <input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => updateField("email", e.target.value)}
+                    placeholder="your@email.com"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-card text-foreground"
+                  />
                 </div>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-1.5 block">Address</label>
-                <textarea rows={3} placeholder="Enter your full address..." className="w-full px-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none" />
+                <textarea
+                  rows={3}
+                  value={form.address}
+                  onChange={(e) => updateField("address", e.target.value)}
+                  placeholder="Enter your full address..."
+                  className="w-full px-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none bg-card text-foreground"
+                />
               </div>
             </div>
-            <button onClick={() => setStep(1)} className="w-full py-4 gradient-primary text-white font-semibold rounded-2xl hover:opacity-90 transition-opacity shadow-md text-lg">Continue</button>
+            <button onClick={handleNext} className="w-full py-4 gradient-primary text-white font-semibold rounded-2xl hover:opacity-90 transition-opacity shadow-md text-lg">Continue</button>
           </div>
         )}
 
@@ -109,7 +164,13 @@ export default function OnboardingPage() {
               <label className="text-sm font-medium text-foreground mb-1.5 block">Aadhaar Number</label>
               <div className="relative">
                 <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input type="text" placeholder="1234 5678 9012" className="w-full pl-11 pr-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                <input
+                  type="text"
+                  value={form.aadhaar}
+                  onChange={(e) => updateField("aadhaar", e.target.value)}
+                  placeholder="1234 5678 9012"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-card text-foreground"
+                />
               </div>
             </div>
 
@@ -117,7 +178,7 @@ export default function OnboardingPage() {
               <label className="text-sm font-medium text-foreground mb-3 block">Upload Documents</label>
               <div className="space-y-3">
                 {["Aadhaar Card (Front)", "Aadhaar Card (Back)", "Photo ID (Optional)"].map((doc) => (
-                  <div key={doc} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-dashed border-border cursor-pointer hover:border-primary transition-colors">
+                  <div key={doc} className="flex items-center gap-3 p-4 bg-card rounded-xl border border-dashed border-border cursor-pointer hover:border-primary transition-colors">
                     <Upload className="w-5 h-5 text-muted-foreground" />
                     <div className="flex-1">
                       <p className="text-sm font-medium text-foreground">{doc}</p>
@@ -131,7 +192,7 @@ export default function OnboardingPage() {
 
             <div className="flex gap-3">
               <button onClick={() => setStep(0)} className="px-6 py-4 border border-border rounded-2xl font-semibold text-foreground hover:bg-muted transition-colors">Back</button>
-              <button onClick={() => setStep(2)} className="flex-1 py-4 gradient-primary text-white font-semibold rounded-2xl hover:opacity-90 transition-opacity shadow-md text-lg">Continue</button>
+              <button onClick={handleNext} className="flex-1 py-4 gradient-primary text-white font-semibold rounded-2xl hover:opacity-90 transition-opacity shadow-md text-lg">Continue</button>
             </div>
           </div>
         )}
@@ -140,14 +201,14 @@ export default function OnboardingPage() {
         {step === 2 && (
           <div className="space-y-6 animate-fade-in">
             <div>
-              <label className="text-sm font-semibold text-foreground mb-3 block">Select Your Skills</label>
+              <label className="text-sm font-semibold text-foreground mb-3 block">Select Your Skills *</label>
               <div className="grid grid-cols-2 gap-3">
                 {JOB_CATEGORIES.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => toggleSkill(cat.id)}
                     className={`p-4 rounded-2xl border-2 text-left transition-all flex items-center gap-3 ${
-                      selectedSkills.includes(cat.id) ? "border-primary bg-primary-light" : "border-border bg-white hover:border-primary/30"
+                      selectedSkills.includes(cat.id) ? "border-primary bg-primary-light" : "border-border bg-card hover:border-primary/30"
                     }`}
                   >
                     <span className="text-2xl">{cat.icon}</span>
@@ -165,18 +226,30 @@ export default function OnboardingPage() {
 
             <div>
               <label className="text-sm font-medium text-foreground mb-1.5 block">Hourly Rate (₹)</label>
-              <input type="number" placeholder="500" className="w-full px-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+              <input
+                type="number"
+                value={form.hourlyRate}
+                onChange={(e) => updateField("hourlyRate", e.target.value)}
+                placeholder="500"
+                className="w-full px-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-card text-foreground"
+              />
               <p className="text-xs text-muted-foreground mt-1">Average rate for your skills: ₹400-600/hr</p>
             </div>
 
             <div>
               <label className="text-sm font-medium text-foreground mb-1.5 block">Bio / Experience</label>
-              <textarea rows={4} placeholder="Tell customers about your experience and expertise..." className="w-full px-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none" />
+              <textarea
+                rows={4}
+                value={form.bio}
+                onChange={(e) => updateField("bio", e.target.value)}
+                placeholder="Tell customers about your experience and expertise..."
+                className="w-full px-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none bg-card text-foreground"
+              />
             </div>
 
             <div className="flex gap-3">
               <button onClick={() => setStep(1)} className="px-6 py-4 border border-border rounded-2xl font-semibold text-foreground hover:bg-muted transition-colors">Back</button>
-              <button onClick={() => setStep(3)} className="flex-1 py-4 gradient-primary text-white font-semibold rounded-2xl hover:opacity-90 transition-opacity shadow-md text-lg">Continue</button>
+              <button onClick={handleNext} className="flex-1 py-4 gradient-primary text-white font-semibold rounded-2xl hover:opacity-90 transition-opacity shadow-md text-lg">Continue</button>
             </div>
           </div>
         )}
@@ -192,7 +265,24 @@ export default function OnboardingPage() {
               <p className="text-muted-foreground">Your profile is under review. We&apos;ll verify your documents within 24-48 hours.</p>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-border space-y-3">
+            {/* Summary of submitted info */}
+            {form.fullName && (
+              <div className="bg-card rounded-2xl p-5 border border-border space-y-2">
+                <h3 className="font-semibold text-foreground mb-2">Your Submission</h3>
+                <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground">Name:</span> {form.fullName}</p>
+                <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground">Phone:</span> {form.phone}</p>
+                {form.email && <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground">Email:</span> {form.email}</p>}
+                {selectedSkills.length > 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">Skills:</span>{" "}
+                    {selectedSkills.map((id) => JOB_CATEGORIES.find((c) => c.id === id)?.name).filter(Boolean).join(", ")}
+                  </p>
+                )}
+                {form.hourlyRate && <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground">Rate:</span> ₹{form.hourlyRate}/hr</p>}
+              </div>
+            )}
+
+            <div className="bg-card rounded-2xl p-5 border border-border space-y-3">
               <h3 className="font-semibold text-foreground">What happens next?</h3>
               {[
                 "Our team reviews your documents",

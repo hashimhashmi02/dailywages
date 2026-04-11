@@ -2,11 +2,43 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Wrench, Mail, Phone, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { showToast } from "@/components/Toast";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [mode, setMode] = useState<"customer" | "worker" | "admin">("customer");
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignIn = () => {
+    if (!email.trim()) {
+      showToast("Please enter your email or phone number", "warning");
+      return;
+    }
+    if (!password.trim()) {
+      showToast("Please enter your password", "warning");
+      return;
+    }
+    if (password.length < 6) {
+      showToast("Password must be at least 6 characters", "warning");
+      return;
+    }
+
+    setIsLoading(true);
+    // Simulate auth delay
+    setTimeout(() => {
+      const destination =
+        mode === "customer" ? "/customer/dashboard" :
+        mode === "worker" ? "/worker/dashboard" :
+        "/admin/dashboard";
+      showToast(`Welcome back! Signed in as ${mode}.`, "success");
+      router.push(destination);
+    }, 800);
+  };
 
   return (
     <div className="min-h-screen gradient-hero flex items-center justify-center p-4">
@@ -38,28 +70,57 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-foreground mb-1.5 block">Email or Phone</label>
+              <label htmlFor="login-email" className="text-sm font-medium text-foreground mb-1.5 block">Email or Phone</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input type="text" placeholder="Enter email or phone" className="w-full pl-11 pr-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                <input
+                  id="login-email"
+                  type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter email or phone"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  autoComplete="email"
+                />
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-foreground mb-1.5 block">Password</label>
+              <label htmlFor="login-password" className="text-sm font-medium text-foreground mb-1.5 block">Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input type={showPassword ? "text" : "password"} placeholder="Enter password" className="w-full pl-11 pr-11 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
-                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2">
+                <input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  className="w-full pl-11 pr-11 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  autoComplete="current-password"
+                  onKeyDown={(e) => e.key === "Enter" && handleSignIn()}
+                />
+                <button
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  type="button"
+                >
                   {showPassword ? <EyeOff className="w-4 h-4 text-muted-foreground" /> : <Eye className="w-4 h-4 text-muted-foreground" />}
                 </button>
               </div>
             </div>
 
-            <Link href={mode === "customer" ? "/customer/dashboard" : mode === "worker" ? "/worker/dashboard" : "/admin/dashboard"}
-              className="w-full py-3.5 gradient-primary text-white font-semibold rounded-xl hover:opacity-90 transition-opacity shadow-md flex items-center justify-center gap-2 text-lg">
-              Sign In <ArrowRight className="w-5 h-5" />
-            </Link>
+            <button
+              onClick={handleSignIn}
+              disabled={isLoading}
+              className="w-full py-3.5 gradient-primary text-white font-semibold rounded-xl hover:opacity-90 transition-opacity shadow-md flex items-center justify-center gap-2 text-lg disabled:opacity-60"
+            >
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>Sign In <ArrowRight className="w-5 h-5" /></>
+              )}
+            </button>
 
             <div className="relative my-4">
               <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
