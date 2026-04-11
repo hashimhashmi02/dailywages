@@ -69,7 +69,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-muted page-transition">
+    <div className="min-h-screen bg-background page-transition">
       <PageHeader title="Worker Registration" backHref="/">
         {/* Step indicator */}
         <div className="flex gap-2">

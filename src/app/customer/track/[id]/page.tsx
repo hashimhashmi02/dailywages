@@ -15,6 +15,7 @@ import {
   Circle,
 } from "lucide-react";
 import { MOCK_WORKERS } from "@/lib/constants";
+import UserAvatar from "@/components/UserAvatar";
 
 const TRACKING_STEPS = [
   { id: 1, label: "Booking Confirmed", time: "10:35 AM", done: true },
@@ -38,9 +39,8 @@ export default function TrackPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-muted flex flex-col">
-      {/* ─── Header ──────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-border sticky top-0 z-40">
+    <div className="min-h-screen bg-background flex flex-col page-transition">
+      <header className="header-blur sticky top-0 z-40">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -111,14 +111,9 @@ export default function TrackPage() {
 
       {/* ─── Worker Card ─────────────────────────────────────────────────── */}
       <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 -mt-2 relative z-10">
-        <div className="bg-white rounded-2xl p-5 border border-border shadow-lg">
+        <div className="bg-card rounded-2xl p-5 border border-border shadow-lg">
           <div className="flex items-center gap-4 mb-4">
-            <div className="relative">
-              <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center text-white font-bold text-lg">
-                {worker.user.name.split(" ").map(n => n[0]).join("")}
-              </div>
-              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
-            </div>
+              <UserAvatar name={worker.user.name} size="lg" isOnline={true} />
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-foreground">{worker.user.name}</h3>
@@ -131,10 +126,10 @@ export default function TrackPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button className="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center hover:bg-green-100 transition-colors">
+              <button className="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center hover:bg-green-100 transition-colors" aria-label="Call worker">
                 <Phone className="w-5 h-5 text-green-600" />
               </button>
-              <button className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors">
+              <button className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors" aria-label="Message worker">
                 <MessageSquare className="w-5 h-5 text-blue-600" />
               </button>
             </div>
@@ -148,7 +143,7 @@ export default function TrackPage() {
             </div>
             <div className="flex gap-1.5">
               {["4", "7", "2", "9"].map((d, i) => (
-                <div key={i} className="w-9 h-10 rounded-lg bg-white border border-border flex items-center justify-center font-bold text-foreground">
+                <div key={i} className="w-9 h-10 rounded-lg bg-card border border-border flex items-center justify-center font-bold text-foreground">
                   {d}
                 </div>
               ))}

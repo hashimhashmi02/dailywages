@@ -80,13 +80,12 @@ export default function WorkerDashboard() {
   }, [isWorkerOnline, toggleWorkerOnline]);
 
   return (
-    <div className="min-h-screen bg-muted page-transition">
+    <div className="min-h-screen bg-background page-transition">
       {/* ─── Header ──────────────────────────────────────────────────────── */}
       <header
-        className={`border-b border-border sticky top-0 z-40 transition-colors ${
-          isWorkerOnline ? "bg-green-50 [data-theme=dark]:bg-green-950/30" : "bg-white"
+        className={`header-blur sticky top-0 z-40 transition-colors ${
+          isWorkerOnline ? "!bg-green-50/90" : ""
         }`}
-        style={{ backgroundColor: isWorkerOnline ? undefined : "var(--card)" }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
@@ -102,7 +101,7 @@ export default function WorkerDashboard() {
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <button
-                className="relative p-2.5 rounded-xl bg-white hover:bg-muted transition-colors border border-border"
+                className="relative p-2.5 rounded-xl bg-card hover:bg-muted transition-colors border border-border"
                 aria-label="Notifications"
               >
                 <Bell className="w-5 h-5 text-muted-foreground" />
@@ -145,9 +144,9 @@ export default function WorkerDashboard() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* ─── Stats Grid ────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-2 gap-3 mb-6 stagger-children">
           {WORKER_STATS.map((stat) => (
-            <div key={stat.label} className="bg-card rounded-2xl p-4 border border-border hover-lift">
+            <div key={stat.label} className="bg-card rounded-2xl p-4 border border-border hover-lift shadow-sm">
               <div className="flex items-center justify-between mb-2">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: stat.bg }}>
                   <stat.icon className="w-5 h-5" style={{ color: stat.color }} />
@@ -275,7 +274,7 @@ export default function WorkerDashboard() {
       </main>
 
       {/* ─── Bottom Nav ──────────────────────────────────────────────────── */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50" aria-label="Worker navigation">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bottom-nav z-50" aria-label="Worker navigation">
         <div className="flex items-center justify-around py-2">
           <Link href="/worker/dashboard" className="flex flex-col items-center gap-0.5 py-1 text-primary" aria-current="page">
             <Home className="w-5 h-5" />

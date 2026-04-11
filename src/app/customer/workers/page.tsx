@@ -33,7 +33,7 @@ export default function WorkersPage() {
     });
 
   return (
-    <div className="min-h-screen bg-muted page-transition">
+    <div className="min-h-screen bg-background page-transition">
       {/* ─── Header ──────────────────────────────────────────────────────── */}
       <header className="bg-card border-b border-border sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">

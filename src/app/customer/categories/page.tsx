@@ -41,7 +41,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function CategoriesPage() {
   return (
-    <div className="min-h-screen bg-muted page-transition">
+    <div className="min-h-screen bg-background page-transition">
       <PageHeader title="All Services" backHref="/customer/dashboard" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">

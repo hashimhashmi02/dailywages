@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import {
-  ArrowLeft,
   DollarSign,
   TrendingUp,
   Calendar,
@@ -11,8 +9,8 @@ import {
   ArrowDownRight,
   Wallet,
   CreditCard,
-  Clock,
 } from "lucide-react";
+import PageHeader from "@/components/PageHeader";
 
 const WEEKLY_DATA = [
   { day: "Mon", amount: 1800, jobs: 3 },
@@ -38,24 +36,14 @@ const TRANSACTIONS = [
 
 export default function EarningsPage() {
   return (
-    <div className="min-h-screen bg-muted pb-20">
-      {/* ─── Header ──────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-border sticky top-0 z-40">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center gap-3">
-            <Link href="/worker/dashboard" className="p-2 rounded-xl hover:bg-muted transition-colors">
-              <ArrowLeft className="w-5 h-5 text-foreground" />
-            </Link>
-            <h1 className="text-xl font-bold text-foreground">Earnings</h1>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background pb-20 page-transition">
+      <PageHeader title="Earnings" backHref="/worker/dashboard" />
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
         {/* ─── Balance Card ──────────────────────────────────────────────── */}
-        <div className="gradient-primary rounded-2xl p-6 text-white mb-6 shadow-lg shadow-orange-500/20">
+        <div className="gradient-primary rounded-2xl p-6 text-white mb-6 shadow-lg animate-scale-in" style={{ boxShadow: '0 8px 32px rgba(249,115,22,0.25)' }}>
           <p className="text-sm text-orange-100 mb-1">Available Balance</p>
-          <p className="text-4xl font-bold mb-4">₹6,833</p>
+          <p className="text-4xl font-bold mb-5">₹6,833</p>
           <div className="flex gap-3">
             <button className="flex-1 py-3 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:bg-white/30 transition-colors">
               <Wallet className="w-4 h-4" />
@@ -69,24 +57,24 @@ export default function EarningsPage() {
         </div>
 
         {/* ─── Weekly Summary ────────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl p-5 border border-border mb-6">
+        <div className="bg-card rounded-2xl p-5 border border-border mb-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-foreground">This Week</h2>
-            <span className="text-xs text-muted-foreground flex items-center gap-1">
+            <span className="text-xs text-muted-foreground flex items-center gap-1 px-2.5 py-1 bg-muted rounded-lg">
               <Calendar className="w-3.5 h-3.5" /> Mar 31 - Apr 6
             </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 mb-5">
-            <div className="text-center">
+          <div className="grid grid-cols-3 gap-3 mb-5 stagger-children">
+            <div className="text-center p-3 bg-muted rounded-xl">
               <p className="text-xl font-bold text-foreground">₹{weekTotal.toLocaleString("en-IN")}</p>
               <p className="text-xs text-muted-foreground">Earned</p>
             </div>
-            <div className="text-center">
+            <div className="text-center p-3 bg-muted rounded-xl">
               <p className="text-xl font-bold text-foreground">{weekJobs}</p>
               <p className="text-xs text-muted-foreground">Jobs Done</p>
             </div>
-            <div className="text-center">
+            <div className="text-center p-3 bg-muted rounded-xl">
               <p className="text-xl font-bold text-green-600 flex items-center justify-center gap-0.5">
                 <TrendingUp className="w-4 h-4" /> 12%
               </p>
@@ -95,15 +83,15 @@ export default function EarningsPage() {
           </div>
 
           {/* Bar Chart */}
-          <div className="flex items-end gap-2 h-32">
+          <div className="flex items-end gap-2.5 h-32">
             {WEEKLY_DATA.map((d) => (
-              <div key={d.day} className="flex-1 flex flex-col items-center gap-1">
-                <span className="text-[10px] font-medium text-muted-foreground">₹{(d.amount / 1000).toFixed(1)}k</span>
+              <div key={d.day} className="flex-1 flex flex-col items-center gap-1 group">
+                <span className="text-[10px] font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">₹{(d.amount / 1000).toFixed(1)}k</span>
                 <div
-                  className="w-full gradient-primary rounded-t-lg transition-all hover:opacity-80"
+                  className="w-full gradient-primary rounded-xl transition-all group-hover:opacity-80"
                   style={{ height: `${(d.amount / maxAmount) * 100}%`, minHeight: "8px" }}
                 />
-                <span className="text-[10px] text-muted-foreground">{d.day}</span>
+                <span className="text-[10px] text-muted-foreground font-medium">{d.day}</span>
               </div>
             ))}
           </div>
@@ -113,15 +101,15 @@ export default function EarningsPage() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-foreground">Transaction History</h2>
-            <button className="text-sm text-primary font-medium flex items-center gap-1">
+            <button className="text-sm text-primary font-medium flex items-center gap-1 hover:opacity-80 transition-opacity" aria-label="Export transactions">
               <Download className="w-3.5 h-3.5" /> Export
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 stagger-children">
             {TRANSACTIONS.map((tx) => (
-              <div key={tx.id} className="bg-white rounded-2xl p-4 border border-border flex items-center gap-4">
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${
+              <div key={tx.id} className="bg-card rounded-2xl p-4 border border-border flex items-center gap-4 shadow-sm hover-lift">
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
                   tx.amount > 0 ? "bg-green-50" : "bg-red-50"
                 }`}>
                   {tx.amount > 0 ? (

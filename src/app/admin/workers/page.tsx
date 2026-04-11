@@ -59,7 +59,7 @@ export default function AdminWorkersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-muted page-transition">
+    <div className="min-h-screen bg-background page-transition">
       <PageHeader title="Worker Management" backHref="/admin/dashboard">
         <div className="flex gap-2">
           <button
