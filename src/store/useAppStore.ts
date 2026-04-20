@@ -1,7 +1,19 @@
 import { create } from "zustand";
 import { UserRole } from "@/types";
 
+interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+}
+
 interface AppState {
+  // Authenticated user
+  user: AuthUser | null;
+  setUser: (user: AuthUser | null) => void;
+  clearUser: () => void;
+
   // Current user role for demo navigation
   currentRole: UserRole;
   setCurrentRole: (role: UserRole) => void;
@@ -24,6 +36,10 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
+  user: null,
+  setUser: (user) => set({ user, currentRole: user?.role ?? "CUSTOMER" }),
+  clearUser: () => set({ user: null }),
+
   currentRole: "CUSTOMER",
   setCurrentRole: (role) => set({ currentRole: role }),
 

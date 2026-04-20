@@ -24,6 +24,7 @@ import {
 import { MOCK_BOOKINGS, MOCK_WORKERS, JOB_CATEGORIES } from "@/lib/constants";
 import UserAvatar from "@/components/UserAvatar";
 import ThemeToggle from "@/components/ThemeToggle";
+import LogoutButton from "@/components/LogoutButton";
 
 const QUICK_CATEGORIES = [
   { name: "Plumber", icon: Wrench, color: "#3b82f6" },
@@ -55,6 +56,7 @@ export default function CustomerDashboard() {
                 <Bell className="w-5 h-5 text-muted-foreground" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
               </button>
+              <LogoutButton />
               <UserAvatar name="Rahul Sharma" size="sm" />
             </div>
           </div>
