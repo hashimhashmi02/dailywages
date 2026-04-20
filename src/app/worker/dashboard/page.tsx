@@ -25,6 +25,7 @@ import { useAppStore } from "@/store/useAppStore";
 import UserAvatar from "@/components/UserAvatar";
 import StarRating from "@/components/StarRating";
 import ThemeToggle from "@/components/ThemeToggle";
+import LogoutButton from "@/components/LogoutButton";
 import { showToast } from "@/components/Toast";
 
 const WORKER_STATS = [
@@ -107,6 +108,7 @@ export default function WorkerDashboard() {
                 <Bell className="w-5 h-5 text-muted-foreground" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
               </button>
+              <LogoutButton />
             </div>
           </div>
 

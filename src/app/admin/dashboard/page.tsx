@@ -9,22 +9,18 @@ import {
   TrendingUp,
   AlertTriangle,
   Shield,
-  MapPin,
   Clock,
-  Star,
   ArrowUpRight,
   ChevronRight,
   BarChart3,
-  Settings,
-  LogOut,
   Home,
-  FileText,
   Menu,
   X,
 } from "lucide-react";
 import { MOCK_ADMIN_STATS } from "@/lib/constants";
 import UserAvatar from "@/components/UserAvatar";
 import ThemeToggle from "@/components/ThemeToggle";
+import LogoutButton from "@/components/LogoutButton";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin/dashboard", icon: Home, active: true },
@@ -94,9 +90,7 @@ export default function AdminDashboard() {
               <p className="text-xs text-slate-400">admin@dailywages.in</p>
             </div>
           </div>
-          <Link href="/" className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors">
-            <LogOut className="w-4 h-4" /> Back to Site
-          </Link>
+          <LogoutButton variant="full" />
         </div>
       </aside>
 

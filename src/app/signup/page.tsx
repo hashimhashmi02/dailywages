@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { login } from "@/lib/auth";
+import { useSearchParams } from "next/navigation";
+import { signup } from "@/lib/auth";
 import {
   Wrench,
   Mail,
@@ -10,40 +11,37 @@ import {
   Eye,
   EyeOff,
   ArrowRight,
-  ShieldCheck,
+  ArrowLeft,
+  User,
+  Phone,
   Sparkles,
 } from "lucide-react";
 
-export default function LoginPage() {
-  const [role, setRole] = useState<"CUSTOMER" | "WORKER" | "ADMIN">("CUSTOMER");
+export default function SignupPage() {
+  const searchParams = useSearchParams();
+  const defaultRole = searchParams.get("role") === "worker" ? "WORKER" : "CUSTOMER";
+  const [role, setRole] = useState<"CUSTOMER" | "WORKER">(defaultRole);
   const [showPassword, setShowPassword] = useState(false);
-  const [state, formAction, isPending] = useActionState(login, undefined);
+  const [state, formAction, isPending] = useActionState(signup, undefined);
 
   return (
     <div className="min-h-screen gradient-hero flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated background orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
-          className="absolute -top-40 -right-40 w-80 h-80 rounded-full opacity-10"
-          style={{
-            background:
-              "radial-gradient(circle, #f97316 0%, transparent 70%)",
-            animation: "float 6s ease-in-out infinite",
-          }}
-        />
-        <div
-          className="absolute -bottom-32 -left-32 w-64 h-64 rounded-full opacity-8"
+          className="absolute -top-40 -left-40 w-80 h-80 rounded-full opacity-10"
           style={{
             background:
               "radial-gradient(circle, #0d9488 0%, transparent 70%)",
-            animation: "float 8s ease-in-out infinite reverse",
+            animation: "float 7s ease-in-out infinite",
           }}
         />
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-5"
+          className="absolute -bottom-32 -right-32 w-64 h-64 rounded-full opacity-8"
           style={{
             background:
-              "radial-gradient(circle, #f59e0b 0%, transparent 70%)",
+              "radial-gradient(circle, #f97316 0%, transparent 70%)",
+            animation: "float 9s ease-in-out infinite reverse",
           }}
         />
       </div>
@@ -51,16 +49,18 @@ export default function LoginPage() {
       <div className="w-full max-w-md relative z-10 animate-scale-in">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-18 h-18 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-500/25 hover-lift"
-            style={{ width: "72px", height: "72px" }}>
+          <div
+            className="w-18 h-18 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-500/25 hover-lift"
+            style={{ width: "72px", height: "72px" }}
+          >
             <Wrench className="w-9 h-9 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white tracking-tight">
-            DailyWages
+            Join DailyWages
           </h1>
           <p className="text-slate-400 text-sm mt-1.5 flex items-center justify-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            Skilled Workers, One Tap Away
+            Create your account to get started
           </p>
         </div>
 
@@ -68,7 +68,7 @@ export default function LoginPage() {
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/20 relative overflow-hidden">
           {/* Subtle top accent bar */}
           <div
-            className="absolute top-0 left-0 right-0 h-1 gradient-primary"
+            className="absolute top-0 left-0 right-0 h-1 gradient-accent"
             style={{ borderRadius: "24px 24px 0 0" }}
           />
 
@@ -78,7 +78,6 @@ export default function LoginPage() {
               [
                 { key: "CUSTOMER", label: "Customer" },
                 { key: "WORKER", label: "Worker" },
-                { key: "ADMIN", label: "Admin" },
               ] as const
             ).map((r) => (
               <button
@@ -98,22 +97,17 @@ export default function LoginPage() {
 
           {/* Title */}
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              {role === "ADMIN" && (
-                <ShieldCheck className="w-5 h-5 text-amber-500" />
-              )}
-              {role === "ADMIN"
-                ? "Admin Login"
-                : `Welcome back`}
+            <h2 className="text-xl font-bold text-slate-900">
+              Sign up as {role === "CUSTOMER" ? "Customer" : "Worker"}
             </h2>
             <p className="text-sm text-slate-500 mt-1">
-              {role === "ADMIN"
-                ? "Access the admin dashboard"
-                : `Sign in to your ${role.toLowerCase()} account`}
+              {role === "CUSTOMER"
+                ? "Find skilled workers near you instantly"
+                : "Start earning by showcasing your skills"}
             </p>
           </div>
 
-          {/* Global error message */}
+          {/* Global error */}
           {state?.message && (
             <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-red-700 text-sm animate-slide-down">
               {state.message}
@@ -122,13 +116,39 @@ export default function LoginPage() {
 
           {/* Form */}
           <form action={formAction} className="space-y-4">
-            {/* Hidden role field */}
             <input type="hidden" name="role" value={role} />
+
+            {/* Name */}
+            <div>
+              <label
+                htmlFor="signup-name"
+                className="text-sm font-medium text-slate-700 mb-1.5 block"
+              >
+                Full Name
+              </label>
+              <div className="relative group">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
+                <input
+                  id="signup-name"
+                  name="name"
+                  type="text"
+                  placeholder="Your full name"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all bg-white"
+                  autoComplete="name"
+                  required
+                />
+              </div>
+              {state?.errors?.name && (
+                <p className="text-xs text-red-500 mt-1.5 ml-1">
+                  {state.errors.name[0]}
+                </p>
+              )}
+            </div>
 
             {/* Email */}
             <div>
               <label
-                htmlFor="login-email"
+                htmlFor="signup-email"
                 className="text-sm font-medium text-slate-700 mb-1.5 block"
               >
                 Email
@@ -136,7 +156,7 @@ export default function LoginPage() {
               <div className="relative group">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
                 <input
-                  id="login-email"
+                  id="signup-email"
                   name="email"
                   type="email"
                   placeholder="you@example.com"
@@ -152,10 +172,37 @@ export default function LoginPage() {
               )}
             </div>
 
+            {/* Phone */}
+            <div>
+              <label
+                htmlFor="signup-phone"
+                className="text-sm font-medium text-slate-700 mb-1.5 block"
+              >
+                Phone{" "}
+                <span className="text-slate-400 font-normal">(optional)</span>
+              </label>
+              <div className="relative group">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
+                <input
+                  id="signup-phone"
+                  name="phone"
+                  type="tel"
+                  placeholder="+91 98765 43210"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all bg-white"
+                  autoComplete="tel"
+                />
+              </div>
+              {state?.errors?.phone && (
+                <p className="text-xs text-red-500 mt-1.5 ml-1">
+                  {state.errors.phone[0]}
+                </p>
+              )}
+            </div>
+
             {/* Password */}
             <div>
               <label
-                htmlFor="login-password"
+                htmlFor="signup-password"
                 className="text-sm font-medium text-slate-700 mb-1.5 block"
               >
                 Password
@@ -163,12 +210,12 @@ export default function LoginPage() {
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
                 <input
-                  id="login-password"
+                  id="signup-password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
+                  placeholder="Min. 6 characters"
                   className="w-full pl-11 pr-11 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all bg-white"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   required
                 />
                 <button
@@ -201,41 +248,37 @@ export default function LoginPage() {
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  Sign In
+                  Create Account
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Sign up link */}
-          {role !== "ADMIN" && (
-            <>
-              <div className="relative my-5">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200" />
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-white px-3 text-xs text-slate-400">
-                    New here?
-                  </span>
-                </div>
-              </div>
+          {/* Login link */}
+          <div className="relative my-5">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-white px-3 text-xs text-slate-400">
+                Already registered?
+              </span>
+            </div>
+          </div>
 
-              <Link
-                href={`/signup?role=${role.toLowerCase()}`}
-                className="w-full py-3 border border-slate-200 rounded-xl text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2 text-slate-700"
-              >
-                Create an account
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </>
-          )}
+          <Link
+            href="/login"
+            className="w-full py-3 border border-slate-200 rounded-xl text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2 text-slate-700"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Sign In
+          </Link>
         </div>
 
         {/* Footer */}
         <p className="text-center text-xs text-slate-500 mt-6">
-          By signing in, you agree to our{" "}
+          By creating an account, you agree to our{" "}
           <span className="text-slate-300 hover:text-white transition-colors cursor-pointer">
             Terms
           </span>{" "}
