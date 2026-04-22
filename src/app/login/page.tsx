@@ -19,7 +19,6 @@ import {
   Hammer,
 } from "lucide-react";
 
-/* ─── Static Data ──────────────────────────────────────────────────────────── */
 
 const ROLES = [
   { key: "CUSTOMER" as const, label: "Customer", icon: Users, sub: "Book services" },
@@ -40,7 +39,7 @@ const AVATARS = [
   { initials: "SD", bg: "#3b82f6" },
 ];
 
-/* ─── Component ────────────────────────────────────────────────────────────── */
+
 
 export default function LoginPage() {
   const [role, setRole] = useState<"CUSTOMER" | "WORKER" | "ADMIN">("CUSTOMER");
@@ -49,22 +48,18 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-      {/* ── LEFT: Hero Panel ────────────────────────────────────────────── */}
+
       <aside className="hidden lg:flex flex-col justify-between p-14 xl:p-16 relative overflow-hidden bg-[#0f172a]">
-        {/* Background effects */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/80 via-[#1e1b4b] to-[#0f172a]" />
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 30% 20%, rgba(249,115,22,0.1) 0%, transparent 50%)" }} />
         <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "radial-gradient(#fff 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
 
-        {/* Floating decorations */}
         <Wrench className="absolute top-[14%] left-[10%] w-5 h-5 text-white/[0.06]" style={{ animation: "float 5s ease-in-out infinite" }} />
         <Zap className="absolute top-[28%] right-[14%] w-4 h-4 text-white/[0.06]" style={{ animation: "float 6s ease-in-out 1s infinite" }} />
         <Paintbrush className="absolute bottom-[30%] left-[8%] w-4 h-4 text-white/[0.06]" style={{ animation: "float 5s ease-in-out 2s infinite" }} />
         <Hammer className="absolute bottom-[16%] right-[10%] w-5 h-5 text-white/[0.06]" style={{ animation: "float 4s ease-in-out 0.5s infinite" }} />
 
-        {/* Content (z-10) */}
         <div className="relative z-10 flex flex-col justify-between h-full gap-12">
-          {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
               <Wrench className="w-5 h-5 text-white" />
@@ -72,7 +67,6 @@ export default function LoginPage() {
             <span className="text-lg font-bold text-white">DailyWages</span>
           </div>
 
-          {/* Hero copy */}
           <div className="space-y-6 max-w-sm">
             <h1 className="text-4xl font-extrabold text-white leading-tight">
               Skilled workers,
@@ -92,7 +86,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Social proof */}
           <div className="flex items-center gap-3">
             <div className="flex -space-x-2">
               {AVATARS.map((a, i) => (
@@ -115,9 +108,8 @@ export default function LoginPage() {
         </div>
       </aside>
 
-      {/* ── RIGHT: Auth Form ────────────────────────────────────────────── */}
       <main className="flex flex-col bg-white">
-        {/* Mobile-only header */}
+
         <header className="lg:hidden bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81] px-6 pt-10 pb-8 text-center">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-orange-500/30">
             <Wrench className="w-7 h-7 text-white" />
@@ -126,16 +118,16 @@ export default function LoginPage() {
           <p className="text-indigo-300/70 text-sm mt-1">Skilled Workers, One Tap Away</p>
         </header>
 
-        {/* Centered form wrapper */}
+
         <div className="flex-1 flex items-start lg:items-center justify-center overflow-y-auto">
           <div className="w-full max-w-md px-6 py-10 lg:py-16">
-            {/* Desktop heading */}
+
             <div className="hidden lg:block mb-10">
               <h2 className="text-3xl font-bold text-slate-900">Welcome back</h2>
               <p className="text-slate-500 mt-2">Sign in to continue to your account</p>
             </div>
 
-            {/* ── Role selector ───────────────────────────────────────── */}
+
             <fieldset className="mb-8">
               <legend className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">
                 Sign in as
@@ -148,16 +140,14 @@ export default function LoginPage() {
                       key={r.key}
                       type="button"
                       onClick={() => setRole(r.key)}
-                      className={`relative flex flex-col items-center gap-2.5 py-4 px-2 rounded-2xl border-2 transition-all duration-150 ${
-                        active
-                          ? "border-orange-400 bg-orange-50"
-                          : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                      }`}
+                      className={`relative flex flex-col items-center gap-2.5 py-4 px-2 rounded-2xl border-2 transition-all duration-150 ${active
+                        ? "border-orange-400 bg-orange-50"
+                        : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                        }`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
-                          active ? "bg-orange-500 text-white" : "bg-slate-100 text-slate-500"
-                        }`}
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${active ? "bg-orange-500 text-white" : "bg-slate-100 text-slate-500"
+                          }`}
                       >
                         <r.icon className="w-5 h-5" />
                       </div>
@@ -180,14 +170,12 @@ export default function LoginPage() {
               </div>
             </fieldset>
 
-            {/* ── Error banner ────────────────────────────────────────── */}
             {state?.message && (
               <div className="mb-6 p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
                 {state.message}
               </div>
             )}
 
-            {/* ── Login form ─────────────────────────────────────────── */}
             <form action={formAction} className="space-y-5">
               <input type="hidden" name="role" value={role} />
 
@@ -236,7 +224,6 @@ export default function LoginPage() {
                 {state?.errors?.password && <p className="mt-1 text-xs text-red-500">{state.errors.password[0]}</p>}
               </div>
 
-              {/* Submit */}
               <button
                 type="submit" disabled={isPending}
                 className="w-full h-12 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md shadow-orange-500/25 hover:shadow-lg hover:shadow-orange-500/30 active:scale-[0.98] disabled:opacity-50 transition-all"
@@ -249,7 +236,6 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* ── Divider + Sign up ──────────────────────────────────── */}
             {role !== "ADMIN" && (
               <div className="mt-8 space-y-4">
                 <div className="relative">
@@ -265,7 +251,6 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* ── Trust badges ───────────────────────────────────────── */}
             <div className="mt-8 flex items-center justify-center gap-4 text-[11px] text-slate-400">
               <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />256-bit SSL</span>
               <span className="w-1 h-1 rounded-full bg-slate-300" />
