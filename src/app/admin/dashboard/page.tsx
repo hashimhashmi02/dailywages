@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Users,
   Briefcase,
@@ -16,8 +16,8 @@ import {
   Home,
   Menu,
   X,
+  Loader2,
 } from "lucide-react";
-import { MOCK_ADMIN_STATS } from "@/lib/constants";
 import UserAvatar from "@/components/UserAvatar";
 import ThemeToggle from "@/components/ThemeToggle";
 import LogoutButton from "@/components/LogoutButton";
@@ -38,9 +38,66 @@ const RECENT_ACTIVITY = [
   { type: "verification", text: "Worker verified: Anita D. — Cleaner", time: "2 hrs ago" },
 ];
 
+interface Stats {
+  totalWorkers: number;
+  activeWorkers: number;
+  totalCustomers: number;
+  totalBookings: number;
+  todayBookings: number;
+  revenue: number;
+  pendingVerifications: number;
+  openDisputes: number;
+  avgRating: number;
+  completionRate: number;
+  categoryBreakdown: Array<{ category: string; bookings: number }>;
+  weeklyRevenue: Array<{ day: string; revenue: number }>;
+}
+
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const stats = MOCK_ADMIN_STATS;
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const response = await fetch("/api/stats");
+        if (!response.ok) throw new Error("Failed to fetch stats");
+        const data = await response.json();
+        setStats(data.stats);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchStats();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error || "Failed to load dashboard"}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-white rounded-lg"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const KPI_CARDS = [
     { label: "Total Workers", value: stats.totalWorkers.toLocaleString(), change: "+23 this week", icon: Users, color: "#3b82f6", bg: "#eff6ff" },
