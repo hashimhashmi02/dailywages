@@ -15,21 +15,18 @@ export async function GET(request: NextRequest) {
       categoryBreakdown,
       weeklyRevenue,
     ] = await Promise.all([
-      // Total workers
+      
       prisma.worker.count(),
 
-      // Active workers (online)
+      
       prisma.worker.count({
         where: { isOnline: true },
       }),
 
-      // Total customers
       prisma.customer.count(),
 
-      // Total bookings
       prisma.booking.count(),
 
-      // Today's bookings
       prisma.booking.count({
         where: {
           createdAt: {
@@ -38,25 +35,23 @@ export async function GET(request: NextRequest) {
         },
       }),
 
-      // Total revenue (completed payments)
       prisma.payment.aggregate({
         where: { status: "COMPLETED" },
         _sum: { amount: true },
       }),
 
-      // Pending verifications
+      
       prisma.worker.count({
         where: { isVerified: false },
       }),
 
-      // Open disputes
+      
       prisma.dispute.count({
         where: {
           status: { in: ["OPEN", "UNDER_REVIEW"] },
         },
       }),
 
-      // Category breakdown
       prisma.jobCategory.findMany({
         include: {
           _count: {
@@ -70,7 +65,7 @@ export async function GET(request: NextRequest) {
         },
       }),
 
-      // Weekly revenue
+      
       prisma.$queryRaw`
         SELECT
           DATE_TRUNC('day', created_at) as day,
